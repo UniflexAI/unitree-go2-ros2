@@ -8,16 +8,16 @@ find_package(rclcpp REQUIRED)
 find_package(urdf REQUIRED)
 find_package(champ REQUIRED)
 find_package(champ_msgs REQUIRED)
-find_package(gazebo_ros2_control REQUIRED)
-find_package(gazebo_ros REQUIRED)
+find_package(ros_gz_sim REQUIRED)
+find_package(gz_ros2_control REQUIRED)
 
 set(dependencies
   rclcpp
   urdf
   champ
   champ_msgs
-  gazebo_ros2_control
-  gazebo_ros
+  ros_gz_sim
+  gz_ros2_control
 )
 
 install(PROGRAMS
@@ -32,17 +32,19 @@ include_directories(
   ${champ_INCLUDE_DIRS}
   ${champ_INCLUDE_DIRS}/champ/
   ${champ_INCLUDE_DIRS}/champ/champ/
-  ${GAZEBO_INCLUDE_DIRS}
 )
 
-add_executable(contact_sensor src/contact_sensor.cpp)
-target_link_libraries(contact_sensor ${GAZEBO_LIBRARIES})
-ament_target_dependencies(contact_sensor ${dependencies})
+# NOTE: contact_sensor.cpp uses Gazebo Classic APIs and is commented out
+# for Ignition Fortress. A new implementation using Ignition transport
+# would be needed. For now, contact detection can be handled differently.
+# add_executable(contact_sensor src/contact_sensor.cpp)
+# target_link_libraries(contact_sensor ${GAZEBO_LIBRARIES})
+# ament_target_dependencies(contact_sensor ${dependencies})
 
-install(TARGETS 
-  contact_sensor
-    DESTINATION lib/${PROJECT_NAME}
-)
+# install(TARGETS 
+#   contact_sensor
+#     DESTINATION lib/${PROJECT_NAME}
+# )
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY config DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY worlds DESTINATION share/${PROJECT_NAME})

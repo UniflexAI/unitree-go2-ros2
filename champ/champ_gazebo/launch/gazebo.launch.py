@@ -6,154 +6,168 @@ from launch_ros.actions import Node
 
 from launch import LaunchDescription
 from launch.actions import (DeclareLaunchArgument, ExecuteProcess,
-                            IncludeLaunchDescription)
+                            IncludeLaunchDescription, SetEnvironmentVariable,
+                            RegisterEventHandler)
 from launch.conditions import IfCondition
+from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration, PythonExpression
+from launch.substitutions import Command, LaunchConfiguration, PythonExpression, PathJoinSubstitution
 
 
 def generate_launch_description():
+    """Launch file for Ignition Fortress (Gazebo) simulation."""
 
     robot_name = LaunchConfiguration("robot_name")
     use_sim_time = LaunchConfiguration("use_sim_time")
-    gui = LaunchConfiguration("gui")
     headless = LaunchConfiguration("headless")
-    paused = LaunchConfiguration("paused")
-    lite = LaunchConfiguration("lite")
     ros_control_file = LaunchConfiguration("ros_control_file")
     world_init_x = LaunchConfiguration("world_init_x")
     world_init_y = LaunchConfiguration("world_init_y")
     world_init_z = LaunchConfiguration("world_init_z")
     world_init_heading = LaunchConfiguration("world_init_heading")
     gazebo_world = LaunchConfiguration("world")
+    
     gz_pkg_share = launch_ros.substitutions.FindPackageShare(package="champ_gazebo").find(
         "champ_gazebo"
     )
 
-    declare_robot_name = DeclareLaunchArgument("robot_name", default_value="champ")
+    declare_robot_name = DeclareLaunchArgument("robot_name", default_value="go2")
     declare_use_sim_time = DeclareLaunchArgument("use_sim_time", default_value="True")
-    declare_gui = DeclareLaunchArgument("gui", default_value="True")
     declare_headless = DeclareLaunchArgument("headless", default_value="False")
-    declare_paused = DeclareLaunchArgument("paused", default_value="False")
-    declare_lite = DeclareLaunchArgument("lite", default_value="False")
     declare_ros_control_file = DeclareLaunchArgument(
         "ros_control_file",
         default_value=os.path.join(gz_pkg_share, "config/ros_control.yaml"),
     )
     declare_gazebo_world = DeclareLaunchArgument(
-        "world", default_value=os.path.join(gz_pkg_share, "worlds/default.world")
+        "world", default_value=os.path.join(gz_pkg_share, "worlds/default.sdf")
     )
     declare_world_init_x = DeclareLaunchArgument("world_init_x", default_value="0.0")
     declare_world_init_y = DeclareLaunchArgument("world_init_y", default_value="0.0")
-    declare_world_init_z = DeclareLaunchArgument("world_init_z", default_value="0.6")
+    declare_world_init_z = DeclareLaunchArgument("world_init_z", default_value="0.5")
     declare_world_init_heading = DeclareLaunchArgument(
-        "world_init_heading", default_value="0.6"
+        "world_init_heading", default_value="0.0"
     )
 
     pkg_share = launch_ros.substitutions.FindPackageShare(package="champ_description").find("champ_description")
     default_model_path = os.path.join(pkg_share, "urdf/champ.urdf.xacro")
 
-    declare_description_path = DeclareLaunchArgument(name="description_path", default_value=default_model_path, description="Absolute path to robot urdf file")
+    declare_description_path = DeclareLaunchArgument(
+        name="description_path", 
+        default_value=default_model_path, 
+        description="Absolute path to robot urdf file"
+    )
 
     config_pkg_share = launch_ros.substitutions.FindPackageShare(
         package="champ_config"
     ).find("champ_config")
     
     links_config = os.path.join(config_pkg_share, "config/links/links.yaml")
-    gazebo_config = os.path.join(launch_ros.substitutions.FindPackageShare(
-        package="champ_gazebo"
-    ).find("champ_gazebo"), "config/gazebo.yaml")
-    launch_dir = os.path.join(pkg_share, "launch")
-    # Specify the actions
-    start_gazebo_server_cmd = ExecuteProcess(
-        cmd=[
-            "gzserver",
-            "-s",
-            "libgazebo_ros_init.so",
-            "-s",
-            "libgazebo_ros_factory.so",
-            gazebo_world,
-            '--ros-args',
-            '--params-file',
-            gazebo_config
-        ],
-        cwd=[launch_dir],
-        output="screen",
+    
+    # Set ignition resource path for models
+    ign_resource_path = SetEnvironmentVariable(
+        name='IGN_GAZEBO_RESOURCE_PATH',
+        value=[
+            os.path.join(gz_pkg_share, 'worlds'), ':',
+            os.path.join(gz_pkg_share, 'models'), ':',
+            '/usr/share/ignition/ignition-gazebo6/worlds'
+        ]
     )
 
-
-    start_gazebo_client_cmd = ExecuteProcess(
-        condition=IfCondition(PythonExpression([" not ", headless])),
-        cmd=["gzclient"],
-        cwd=[launch_dir],
-        output="screen",
+    # Start Ignition Gazebo with the world file
+    # Use 'ign gazebo' for Ignition Fortress, or 'gz sim' for newer versions
+    start_ignition_cmd = ExecuteProcess(
+        cmd=['ign', 'gazebo', '-r', gazebo_world,
+             '--render-engine', 'ogre2'],
+        output='screen',
+        condition=IfCondition(PythonExpression(['not ', headless])),
     )
-    start_gazebo_spawner_cmd = Node(
-        package="gazebo_ros",
-        executable="spawn_entity.py",
-        output="screen",
-        arguments=[
-            "-entity",
-            robot_name,
-            "-topic",
-            "/robot_description",
-            "-robot_namespace",
-            "",
-            "-x",
-            world_init_x,
-            "-y",
-            world_init_y,
-            "-z",
-            world_init_z,
-            "-R",
-            "0",
-            "-P",
-            "0",
-            "-Y",
-            world_init_heading,
-        ],
+    
+    start_ignition_headless_cmd = ExecuteProcess(
+        cmd=['ign', 'gazebo', '-r', '-s', gazebo_world],
+        output='screen',
+        condition=IfCondition(headless),
     )
 
-    # TODO as for right now, running contact sensor results in RTF being reduced by factor of 2x.
-    # So it needs to be fixed before using that. Unsure what it does actually because even without it
-    # Champ seems to be all right
-    contact_sensor = Node(
-        package="champ_gazebo",
-        executable="contact_sensor",
-        output="screen",
-        parameters=[{"use_sim_time": LaunchConfiguration("use_sim_time")},links_config],
-        # prefix=['xterm -e gdb -ex run --args'],
-    )
-
+    # Robot description
     robot_description = {"robot_description": Command(["xacro ", LaunchConfiguration("description_path")])}
 
+    # Robot state publisher
+    robot_state_publisher = Node(
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        output="screen",
+        parameters=[robot_description, {"use_sim_time": use_sim_time}],
+    )
 
+    # Spawn robot in Ignition using ros_gz_sim
+    spawn_robot = Node(
+        package='ros_gz_sim',
+        executable='create',
+        arguments=[
+            '-name', robot_name,
+            '-topic', '/robot_description',
+            '-x', world_init_x,
+            '-y', world_init_y,
+            '-z', world_init_z,
+            '-Y', world_init_heading,
+        ],
+        output='screen',
+    )
+
+    # Bridge for clock (Ignition -> ROS2)
+    clock_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock'],
+        output='screen',
+    )
+
+    # Bridge for IMU data
+    imu_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/imu/data@sensor_msgs/msg/Imu[ignition.msgs.IMU'],
+        output='screen',
+    )
+
+    # Bridge for laser scan
+    scan_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/scan@sensor_msgs/msg/LaserScan[ignition.msgs.LaserScan'],
+        output='screen',
+    )
+
+    # Load joint state broadcaster
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
              'joint_states_controller'],
         output='screen',
     )
 
-    load_joint_trajectory_position_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'joint_group_position_controller'],
-        output='screen'
-    )
+    # Load joint effort controller
     load_joint_trajectory_effort_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
              'joint_group_effort_controller'],
         output='screen'
     )
 
-    # joint_group_position_controller
+    # Register event handler to load controllers after robot is spawned
+    load_controllers_event = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=spawn_robot,
+            on_exit=[
+                load_joint_state_controller,
+                load_joint_trajectory_effort_controller,
+            ],
+        )
+    )
+
     return LaunchDescription(
         [
             declare_robot_name,
             declare_use_sim_time,
-            declare_gui,
             declare_headless,
-            declare_paused,
-            declare_lite,
             declare_ros_control_file,
             declare_gazebo_world,
             declare_world_init_x,
@@ -161,12 +175,14 @@ def generate_launch_description():
             declare_world_init_z,
             declare_world_init_heading,
             declare_description_path,
-            start_gazebo_server_cmd,
-            start_gazebo_client_cmd,
-            start_gazebo_spawner_cmd,
-            load_joint_state_controller,
-            # load_joint_trajectory_position_controller
-            load_joint_trajectory_effort_controller,
-            contact_sensor
+            ign_resource_path,
+            start_ignition_cmd,
+            start_ignition_headless_cmd,
+            robot_state_publisher,
+            spawn_robot,
+            clock_bridge,
+            imu_bridge,
+            scan_bridge,
+            load_controllers_event,
         ]
     )
