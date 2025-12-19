@@ -47,12 +47,14 @@
         </geometry>
         </visual>
     </link>
-    <!-- Ignition Gazebo requires gpu_lidar sensor type -->
+    <!-- Ignition Gazebo lidar sensor -->
     <gazebo reference="velodyne">
         <sensor name="velodyne-VLP16" type="gpu_lidar">
         <pose>0 0 0 0 0 0</pose>
         <visualize>false</visualize>
         <update_rate>10</update_rate>
+        <topic>velodyne_points</topic>
+        <ignition_frame_id>velodyne</ignition_frame_id>
         <lidar>
             <scan>
             <horizontal>
@@ -79,9 +81,6 @@
             <stddev>0.008</stddev>
             </noise>
         </lidar>
-        <plugin filename="ignition-gazebo-sensors-system" name="ignition::gazebo::systems::Sensors">
-            <ignition_frame_id>velodyne</ignition_frame_id>
-        </plugin>
         </sensor>
     </gazebo>
 </robot>

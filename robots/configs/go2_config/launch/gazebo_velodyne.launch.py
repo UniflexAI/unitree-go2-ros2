@@ -9,6 +9,7 @@ from launch.actions import (
     DeclareLaunchArgument,
     ExecuteProcess,
     IncludeLaunchDescription,
+    SetEnvironmentVariable,
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -29,12 +30,13 @@ def generate_launch_description():
     ).find("go2_description")
     joints_config = os.path.join(config_pkg_share, "config/joints/joints.yaml")
     ros_control_config = os.path.join(
-        config_pkg_share, "/config/ros_control/ros_control.yaml"
+        config_pkg_share, "config/ros_control/ros_control.yaml"
     )
     gait_config = os.path.join(config_pkg_share, "config/gait/gait.yaml")
     links_config = os.path.join(config_pkg_share, "config/links/links.yaml")
     default_model_path = os.path.join(descr_pkg_share, "xacro/robot_VLP.xacro")
-    default_world_path = os.path.join(config_pkg_share, "worlds/default.world")
+    # Use SDF world file for Ignition Fortress
+    default_world_path = os.path.join(config_pkg_share, "worlds/default.sdf")
 
     declare_use_sim_time = DeclareLaunchArgument(
         "use_sim_time",
@@ -45,7 +47,7 @@ def generate_launch_description():
         "rviz", default_value="false", description="Launch rviz"
     )
     declare_robot_name = DeclareLaunchArgument(
-        "robot_name", default_value="go2", description="Robot name"
+        "robot_name", default_value="go2_robot", description="Robot name"
     )
     declare_lite = DeclareLaunchArgument(
         "lite", default_value="false", description="Lite"
@@ -64,9 +66,15 @@ def generate_launch_description():
     )
     declare_world_init_x = DeclareLaunchArgument("world_init_x", default_value="0.0")
     declare_world_init_y = DeclareLaunchArgument("world_init_y", default_value="0.0")
-    declare_world_init_z = DeclareLaunchArgument("world_init_z", default_value="0.275")
+    declare_world_init_z = DeclareLaunchArgument("world_init_z", default_value="20")
     declare_world_init_heading = DeclareLaunchArgument(
         "world_init_heading", default_value="0.0"
+    )
+
+    # Set Gazebo system plugin path for ros2_control
+    gz_plugin_path = SetEnvironmentVariable(
+        name='GZ_SIM_SYSTEM_PLUGIN_PATH',
+        value='/opt/ros/humble/lib'
     )
 
     
@@ -107,18 +115,19 @@ def generate_launch_description():
             "use_sim_time": LaunchConfiguration("use_sim_time"),
             "robot_name": LaunchConfiguration("robot_name"),
             "world": LaunchConfiguration("world"),
-            "lite": LaunchConfiguration("lite"),
             "world_init_x": LaunchConfiguration("world_init_x"),
             "world_init_y": LaunchConfiguration("world_init_y"),
             "world_init_z": LaunchConfiguration("world_init_z"),
             "world_init_heading": LaunchConfiguration("world_init_heading"),
-            "gui": LaunchConfiguration("gui"),
-            "close_loop_odom": "true",
+            "headless": "False",
+            "description_path": default_model_path,
+            "skip_robot_state_publisher": "True",
         }.items(),
     )
 
     return LaunchDescription(
         [
+            gz_plugin_path,
             declare_use_sim_time,
             declare_rviz,
             declare_robot_name,

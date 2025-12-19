@@ -9,6 +9,7 @@ from launch.actions import (
     DeclareLaunchArgument,
     ExecuteProcess,
     IncludeLaunchDescription,
+    SetEnvironmentVariable,
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -46,7 +47,7 @@ def generate_launch_description():
         "rviz", default_value="false", description="Launch rviz"
     )
     declare_robot_name = DeclareLaunchArgument(
-        "robot_name", default_value="go2", description="Robot name"
+        "robot_name", default_value="go2_robot", description="Robot name"
     )
     declare_lite = DeclareLaunchArgument(
         "lite", default_value="false", description="Lite"
@@ -68,6 +69,12 @@ def generate_launch_description():
     declare_world_init_z = DeclareLaunchArgument("world_init_z", default_value="0.275")
     declare_world_init_heading = DeclareLaunchArgument(
         "world_init_heading", default_value="0.0"
+    )
+
+    # Set Gazebo system plugin path for ros2_control
+    gz_plugin_path = SetEnvironmentVariable(
+        name='GZ_SIM_SYSTEM_PLUGIN_PATH',
+        value='/opt/ros/humble/lib'
     )
 
     
@@ -114,11 +121,13 @@ def generate_launch_description():
             "world_init_heading": LaunchConfiguration("world_init_heading"),
             "headless": "False",
             "description_path": default_model_path,
+            "skip_robot_state_publisher": "True",
         }.items(),
     )
 
     return LaunchDescription(
         [
+            gz_plugin_path,
             declare_use_sim_time,
             declare_rviz,
             declare_robot_name,

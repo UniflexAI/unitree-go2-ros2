@@ -7,7 +7,7 @@ from launch_ros.actions import Node
 from launch import LaunchDescription
 from launch.actions import (DeclareLaunchArgument, ExecuteProcess,
                             IncludeLaunchDescription, SetEnvironmentVariable,
-                            RegisterEventHandler)
+                            RegisterEventHandler, TimerAction)
 from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -26,6 +26,7 @@ def generate_launch_description():
     world_init_z = LaunchConfiguration("world_init_z")
     world_init_heading = LaunchConfiguration("world_init_heading")
     gazebo_world = LaunchConfiguration("world")
+    skip_robot_state_publisher = LaunchConfiguration("skip_robot_state_publisher")
     
     gz_pkg_share = launch_ros.substitutions.FindPackageShare(package="champ_gazebo").find(
         "champ_gazebo"
@@ -34,6 +35,10 @@ def generate_launch_description():
     declare_robot_name = DeclareLaunchArgument("robot_name", default_value="go2")
     declare_use_sim_time = DeclareLaunchArgument("use_sim_time", default_value="True")
     declare_headless = DeclareLaunchArgument("headless", default_value="False")
+    declare_skip_robot_state_publisher = DeclareLaunchArgument(
+        "skip_robot_state_publisher", default_value="False",
+        description="Skip robot_state_publisher if already launched elsewhere"
+    )
     declare_ros_control_file = DeclareLaunchArgument(
         "ros_control_file",
         default_value=os.path.join(gz_pkg_share, "config/ros_control.yaml"),
@@ -43,7 +48,7 @@ def generate_launch_description():
     )
     declare_world_init_x = DeclareLaunchArgument("world_init_x", default_value="0.0")
     declare_world_init_y = DeclareLaunchArgument("world_init_y", default_value="0.0")
-    declare_world_init_z = DeclareLaunchArgument("world_init_z", default_value="0.5")
+    declare_world_init_z = DeclareLaunchArgument("world_init_z", default_value="0.8")
     declare_world_init_heading = DeclareLaunchArgument(
         "world_init_heading", default_value="0.0"
     )
@@ -91,12 +96,13 @@ def generate_launch_description():
     # Robot description
     robot_description = {"robot_description": Command(["xacro ", LaunchConfiguration("description_path")])}
 
-    # Robot state publisher
+    # Robot state publisher (skip if already launched by parent launch file)
     robot_state_publisher = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="screen",
         parameters=[robot_description, {"use_sim_time": use_sim_time}],
+        condition=IfCondition(PythonExpression(['not ', skip_robot_state_publisher])),
     )
 
     # Spawn robot in Ignition using ros_gz_sim
@@ -105,6 +111,7 @@ def generate_launch_description():
         executable='create',
         arguments=[
             '-name', robot_name,
+            '-allow_renaming', 'true',
             '-topic', '/robot_description',
             '-x', world_init_x,
             '-y', world_init_y,
@@ -138,29 +145,33 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Load joint state broadcaster
-    load_joint_state_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'joint_states_controller'],
+    # Bridge for Velodyne point cloud (Ignition publishes to /velodyne_points/points)
+    velodyne_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/velodyne_points/points@sensor_msgs/msg/PointCloud2[ignition.msgs.PointCloudPacked'],
         output='screen',
+        remappings=[('/velodyne_points/points', '/velodyne_points')],
     )
 
-    # Load joint effort controller
-    load_joint_trajectory_effort_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'joint_group_effort_controller'],
-        output='screen'
+    # Load joint state broadcaster (with delay to wait for controller_manager)
+    load_joint_state_controller = TimerAction(
+        period=5.0,
+        actions=[ExecuteProcess(
+            cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+                 'joint_states_controller'],
+            output='screen',
+        )],
     )
 
-    # Register event handler to load controllers after robot is spawned
-    load_controllers_event = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=spawn_robot,
-            on_exit=[
-                load_joint_state_controller,
-                load_joint_trajectory_effort_controller,
-            ],
-        )
+    # Load joint effort controller (with delay to wait for controller_manager)
+    load_joint_trajectory_effort_controller = TimerAction(
+        period=6.0,
+        actions=[ExecuteProcess(
+            cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+                 'joint_group_effort_controller'],
+            output='screen'
+        )],
     )
 
     return LaunchDescription(
@@ -168,6 +179,7 @@ def generate_launch_description():
             declare_robot_name,
             declare_use_sim_time,
             declare_headless,
+            declare_skip_robot_state_publisher,
             declare_ros_control_file,
             declare_gazebo_world,
             declare_world_init_x,
@@ -183,6 +195,8 @@ def generate_launch_description():
             clock_bridge,
             imu_bridge,
             scan_bridge,
-            load_controllers_event,
+            velodyne_bridge,
+            load_joint_state_controller,
+            load_joint_trajectory_effort_controller,
         ]
     )
