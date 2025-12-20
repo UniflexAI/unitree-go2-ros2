@@ -61,10 +61,17 @@ sudo apt install -y python3-rosdep
 rosdep update
 
 cd <your_ws>/src
-git clone https://github.com/anujjain-dev/unitree-go2-ros2.git
+git clone https://github.com/rahgirrafi/unitree-go2-ros2.git
+cd unitree-go2-ros2
+
+# Initialize and update the velodyne submodule
+git submodule update --init --recursive
+
 cd <your_ws>
 rosdep install --from-paths src --ignore-src -r -y
 ```
+
+> **Note:** The velodyne lidar package is included as a git submodule. If you've already cloned the repository without the `--recursive` flag, run `git submodule update --init --recursive` to fetch the submodule.
 
 ### 1.2 Build your workspace:
 ```bash
