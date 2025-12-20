@@ -19,7 +19,7 @@
 - [Go2 Description (URDF model)](https://github.com/unitreerobotics/unitree_ros/tree/master/robots/go2_description) 
 - [CHAMP Robots (configs)](https://github.com/chvmp/robots)
 - [CHAMP Controller](https://github.com/chvmp/champ)
-- [Velodyne Simulator](https://github.com/gazebosim/gz-sim/tree/gz-sim7/examples/worlds)
+- [Velodyne Simulator](https://github.com/rahgirrafi/velodyne_simulator_ros2_gz.git)
 
 ## Tested on:
 - Ubuntu 22.04 (ROS 2 Humble)
