@@ -80,25 +80,25 @@ You don't need a physical robot to run the following demos. Make sure you have r
 ```bash
 ros2 launch go2_config gazebo.launch.py
 ```
-![Go2 Gazebo Launch](.docs/gazebo_launch.png)
+![Go2 Gazebo Launch](.docs/gz.png)
 
 ### 2.2 Walking demo in RVIZ: Run the gazebo along with rviz
 ```bash
 ros2 launch go2_config gazebo.launch.py rviz:=true
 ```
-![Go2 Gazebo RViz Launch](.docs/gazebo_rviz_launch.png)
+![Go2 Gazebo RViz Launch](.docs/gz_rviz.png)
 
 ### 2.3 Run the teleop node:
 ```bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
-https://github.com/user-attachments/assets/bcfeec70-12c5-49b8-b7a7-da4fa9b6dea5
+
 
 ### 2.4 Go2 Velodyne Config Gazebo demo: Run the Gazebo environment
 ```bash
 ros2 launch go2_config gazebo_velodyne.launch.py 
 ```
-![Go2 Velodyne Gazebo Launch](.docs/gazebo_velodyne_launch.png)
+![Go2 Velodyne Gazebo Launch](.docs/velodyne.png)
 
 ### 2.5 Go2 Veldyne Config Walking/PointCloud demo in RVIZ: Run the gazebo along with rviz
 ```bash
@@ -107,7 +107,7 @@ ros2 launch go2_config gazebo_velodyne.launch.py rviz:=true
 
 > Note: set point cloud topic to `/velodyne_points`
 
-![Go2 Velodyne Gazebo RViz Launch](.docs/gazebo_velodyne_rviz_launch.png)
+![Go2 Velodyne Gazebo RViz Launch](.docs/velodyne_rviz_pcl.png)
 
 ### 2.6 Go2 Hokoyu 2D LiDAR Config Gazbeo demo: Run the Gazebo environment
 
