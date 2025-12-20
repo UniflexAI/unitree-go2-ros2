@@ -42,36 +42,33 @@
 
 ## 1. Installation
 
-### 1.0 Install ROS-based dependencies:
-```bash
-sudo apt install ros-humble-gazebo-ros2-control
-sudo apt install ros-humble-xacro
-sudo apt install ros-humble-robot-localization
-sudo apt install ros-humble-ros2-controllers
-sudo apt install ros-humble-ros2-control
-sudo apt install ros-humble-velodyne
-sudo apt install ros-humble-velodyne-gazebo-plugins
-sudo apt-get install ros-humble-velodyne-description
-```
-
-### 1.1 Clone and install all dependencies:
+### 1.0 Clone the repository:
     
 ```bash
-sudo apt install -y python3-rosdep
-rosdep update
-
 cd <your_ws>/src
 git clone https://github.com/rahgirrafi/unitree-go2-ros2.git
 cd unitree-go2-ros2
 
 # Initialize and update the velodyne submodule
 git submodule update --init --recursive
-
-cd <your_ws>
-rosdep install --from-paths src --ignore-src -r -y
 ```
 
 > **Note:** The velodyne lidar package is included as a git submodule. If you've already cloned the repository without the `--recursive` flag, run `git submodule update --init --recursive` to fetch the submodule.
+
+### 1.1 Install dependencies using rosdep:
+
+```bash
+# Install rosdep if not already installed
+sudo apt install -y python3-rosdep
+
+# Initialize rosdep (only needed once)
+sudo rosdep init  # Skip if already initialized
+rosdep update
+
+# Install all dependencies
+cd <your_ws>
+rosdep install --from-paths src --ignore-src -r -y
+```
 
 ### 1.2 Build your workspace:
 ```bash
