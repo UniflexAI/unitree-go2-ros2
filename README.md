@@ -5,7 +5,7 @@
 ## Unitree Go2:
 <div style="display: flex; gap: 50px;">
   <img src="https://oss-global-cdn.unitree.com/static/c487f93e06954100a44fac4442b94d94_288x238.png" width="250" />
-  <img src=".docs/gazebo_launch.png" width="350" /> 
+  <img src=".docs/gz.png" width="350" /> 
 </div>
 
 > Unitree Robotics is focusing on the R&D, production, and sales of consumer and industry-class high-performance general-purpose legged and humanoid robots, six-axis manipulators, and so on. We attaches great importance to independent research and development and technological innovation, fully self-researching key core robot components such as motors, reducers, controllers, LIDAR and high-performance perception and motion control algorithms, integrating the entire robotics industry chain.
