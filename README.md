@@ -172,6 +172,6 @@ This project builds upon and incorporates work from the following projects:
 * [Unitree Robotics](https://github.com/unitreerobotics/unitree_ros) - Go2 robot description (URDF model)
 * [CHAMP](https://github.com/chvmp/champ) - Quadruped controller framework
 * [CHAMP Robots](https://github.com/chvmp/robots) - Robot configurations and setup examples
-* [Velodyne Simulator](https://bitbucket.org/DataspeedInc/velodyne_simulator) - Velodyne LiDAR simulation
+* [Velodyne Simulator](https://github.com/rahgirrafi/velodyne_simulator_ros2_gz.git) - Velodyne LiDAR simulation for Ignition Fortress
 
 We are grateful to the developers and contributors of these projects for their valuable work.
