@@ -25,7 +25,7 @@ install(PROGRAMS
   scripts/odometry_tf.py
   scripts/odometry.py
   scripts/imu_deduplicator.py
-  DESTINATION bin
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 include_directories(
