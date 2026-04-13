@@ -196,6 +196,34 @@ def generate_launch_description():
         output='screen',
     )
 
+    camera_color_info_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/color/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        output='screen',
+    )
+
+    camera_depth_info_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/depth/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        output='screen',
+    )
+
+    camera_infra1_info_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/infra1/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        output='screen',
+    )
+
+    camera_infra2_info_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/infra2/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        output='screen',
+    )
+
     # Load joint state broadcaster (with delay to wait for controller_manager)
     load_joint_state_controller = TimerAction(
         period=5.0,
@@ -243,6 +271,10 @@ def generate_launch_description():
             camera_infra1_bridge,
             camera_infra2_bridge,
             camera_imu_bridge,
+            camera_color_info_bridge,
+            camera_depth_info_bridge,
+            camera_infra1_info_bridge,
+            camera_infra2_info_bridge,
             load_joint_state_controller,
             load_joint_trajectory_effort_controller,
         ]
