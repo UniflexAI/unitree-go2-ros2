@@ -24,6 +24,7 @@ install(PROGRAMS
   scripts/imu_sensor.py
   scripts/odometry_tf.py
   scripts/odometry.py
+  scripts/imu_deduplicator.py
   DESTINATION bin
 )
 
