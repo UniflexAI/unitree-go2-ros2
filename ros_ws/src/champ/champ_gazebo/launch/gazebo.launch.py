@@ -188,7 +188,7 @@ def generate_launch_description():
 
     camera_imu_deduplicator = Node(
         package='champ_gazebo',
-        executable='imu_deduplicator.py',
+        executable='imu_deduplicator',
         name='camera_imu_deduplicator',
         output='screen',
         parameters=[{

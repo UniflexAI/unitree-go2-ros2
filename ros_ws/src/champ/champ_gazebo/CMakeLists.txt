@@ -5,6 +5,7 @@ add_compile_options(-std=c++17)
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(urdf REQUIRED)
 find_package(champ REQUIRED)
 find_package(champ_msgs REQUIRED)
@@ -13,6 +14,7 @@ find_package(gz_ros2_control REQUIRED)
 
 set(dependencies
   rclcpp
+  sensor_msgs
   urdf
   champ
   champ_msgs
@@ -24,7 +26,6 @@ install(PROGRAMS
   scripts/imu_sensor.py
   scripts/odometry_tf.py
   scripts/odometry.py
-  scripts/imu_deduplicator.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -41,6 +42,14 @@ include_directories(
 # add_executable(contact_sensor src/contact_sensor.cpp)
 # target_link_libraries(contact_sensor ${GAZEBO_LIBRARIES})
 # ament_target_dependencies(contact_sensor ${dependencies})
+
+add_executable(imu_deduplicator src/imu_deduplicator.cpp)
+ament_target_dependencies(imu_deduplicator ${dependencies})
+
+install(TARGETS
+  imu_deduplicator
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 # install(TARGETS 
 #   contact_sensor

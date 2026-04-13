@@ -14,7 +14,6 @@
   <build_depend>launch_ros</build_depend>
   
   <depend>rclcpp</depend>
-  <depend>rclpy</depend>
   <depend>sensor_msgs</depend>
   <depend>champ</depend>
   <depend>champ_msgs</depend>
