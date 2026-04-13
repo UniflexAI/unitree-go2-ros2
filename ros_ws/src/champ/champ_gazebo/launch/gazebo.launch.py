@@ -189,15 +189,17 @@ def generate_launch_description():
     camera_infra1_info_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/camera/camera/infra1/camera_info_raw@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        arguments=['/camera/camera/infra1/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
         output='screen',
+        remappings=[('/camera/camera/infra1/camera_info', '/camera/camera/infra1/camera_info_gz')],
     )
 
     camera_infra2_info_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/camera/camera/infra2/camera_info_raw@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        arguments=['/camera/camera/infra2/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
         output='screen',
+        remappings=[('/camera/camera/infra2/camera_info', '/camera/camera/infra2/camera_info_gz')],
     )
 
     realsense_patch_node = Node(
@@ -208,9 +210,9 @@ def generate_launch_description():
         parameters=[{
             'imu_input_topic': '/camera/camera/imu_raw',
             'imu_output_topic': '/camera/camera/imu',
-            'infra1_info_input_topic': '/camera/camera/infra1/camera_info_raw',
+            'infra1_info_input_topic': '/camera/camera/infra1/camera_info_gz',
             'infra1_info_output_topic': '/camera/camera/infra1/camera_info',
-            'infra2_info_input_topic': '/camera/camera/infra2/camera_info_raw',
+            'infra2_info_input_topic': '/camera/camera/infra2/camera_info_gz',
             'infra2_info_output_topic': '/camera/camera/infra2/camera_info',
             'stereo_baseline': 0.05,
         }],
