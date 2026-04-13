@@ -198,7 +198,7 @@
 
     <joint name="camera_imu_joint" type="fixed">
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <parent link="camera_link"/>
+        <parent link="camera_left_ir_frame"/>
         <child link="camera_imu_frame"/>
     </joint>
     <link name="camera_imu_frame">
