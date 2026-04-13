@@ -175,3 +175,8 @@ This project builds upon and incorporates work from the following projects:
 * [Velodyne Simulator](https://github.com/rahgirrafi/velodyne_simulator_ros2_gz.git) - Velodyne LiDAR simulation for Ignition Fortress
 
 We are grateful to the developers and contributors of these projects for their valuable work.
+
+## Work plan
+- add Gazebo Realsense D435i simulation scaffold
+- keep Ignition Fortress / ros_gz native path
+- avoid taking a hard dependency on Gazebo Classic Realsense plugins for the first iteration
