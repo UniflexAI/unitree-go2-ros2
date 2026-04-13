@@ -42,58 +42,7 @@
         <parent link="camera_link"/>
         <child link="camera_depth_frame"/>
     </joint>
-    <link name="camera_depth_frame">
-        <visual name="camera_depth_axis_visual">
-            <origin xyz="0.10 0 0" rpy="0 1.57079632679 0"/>
-            <geometry>
-                <cylinder radius="0.005" length="0.20"/>
-            </geometry>
-            <material>
-                <ambient>0.1 0.6 1.0 1</ambient>
-                <diffuse>0.1 0.6 1.0 1</diffuse>
-            </material>
-        </visual>
-        <visual name="camera_depth_fov_top_visual">
-            <origin xyz="0.10 0 0.10" rpy="0 0.78539816339 0"/>
-            <geometry>
-                <cylinder radius="0.003" length="0.28"/>
-            </geometry>
-            <material>
-                <ambient>0.1 0.6 1.0 1</ambient>
-                <diffuse>0.1 0.6 1.0 1</diffuse>
-            </material>
-        </visual>
-        <visual name="camera_depth_fov_bottom_visual">
-            <origin xyz="0.10 0 -0.10" rpy="0 -0.78539816339 0"/>
-            <geometry>
-                <cylinder radius="0.003" length="0.28"/>
-            </geometry>
-            <material>
-                <ambient>0.1 0.6 1.0 1</ambient>
-                <diffuse>0.1 0.6 1.0 1</diffuse>
-            </material>
-        </visual>
-        <visual name="camera_depth_fov_left_visual">
-            <origin xyz="0.10 0.10 0" rpy="1.57079632679 0.78539816339 0"/>
-            <geometry>
-                <cylinder radius="0.003" length="0.28"/>
-            </geometry>
-            <material>
-                <ambient>0.1 0.6 1.0 1</ambient>
-                <diffuse>0.1 0.6 1.0 1</diffuse>
-            </material>
-        </visual>
-        <visual name="camera_depth_fov_right_visual">
-            <origin xyz="0.10 -0.10 0" rpy="1.57079632679 -0.78539816339 0"/>
-            <geometry>
-                <cylinder radius="0.003" length="0.28"/>
-            </geometry>
-            <material>
-                <ambient>0.1 0.6 1.0 1</ambient>
-                <diffuse>0.1 0.6 1.0 1</diffuse>
-            </material>
-        </visual>
-    </link>
+    <link name="camera_depth_frame"/>
 
     <joint name="camera_depth_optical_joint" type="fixed">
         <origin xyz="0 0 0" rpy="-1.57079632679 0 -1.57079632679"/>
@@ -127,24 +76,34 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
         </inertial>
-        <visual name="camera_left_marker_visual">
-            <origin xyz="0.05 0 0" rpy="0 0 0"/>
+        <visual name="camera_left_x_axis_visual">
+            <origin xyz="0.5 0 0" rpy="0 1.57079632679 0"/>
             <geometry>
-                <sphere radius="0.012"/>
+                <cylinder radius="0.008" length="1.0"/>
             </geometry>
             <material>
-                <ambient>0.1 0.95 0.1 1</ambient>
-                <diffuse>0.1 0.95 0.1 1</diffuse>
+                <ambient>1 0 0 1</ambient>
+                <diffuse>1 0 0 1</diffuse>
             </material>
         </visual>
-        <visual name="camera_left_axis_visual">
-            <origin xyz="0.09 0 0" rpy="0 1.57079632679 0"/>
+        <visual name="camera_left_y_axis_visual">
+            <origin xyz="0 0.5 0" rpy="1.57079632679 0 0"/>
             <geometry>
-                <cylinder radius="0.0035" length="0.10"/>
+                <cylinder radius="0.008" length="1.0"/>
             </geometry>
             <material>
-                <ambient>0.1 0.95 0.1 1</ambient>
-                <diffuse>0.1 0.95 0.1 1</diffuse>
+                <ambient>0 1 0 1</ambient>
+                <diffuse>0 1 0 1</diffuse>
+            </material>
+        </visual>
+        <visual name="camera_left_z_axis_visual">
+            <origin xyz="0 0 0.5" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.008" length="1.0"/>
+            </geometry>
+            <material>
+                <ambient>0 0 1 1</ambient>
+                <diffuse>0 0 1 1</diffuse>
             </material>
         </visual>
     </link>
@@ -167,24 +126,34 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
         </inertial>
-        <visual name="camera_right_marker_visual">
-            <origin xyz="0.05 0 0" rpy="0 0 0"/>
+        <visual name="camera_right_x_axis_visual">
+            <origin xyz="0.5 0 0" rpy="0 1.57079632679 0"/>
             <geometry>
-                <sphere radius="0.012"/>
+                <cylinder radius="0.008" length="1.0"/>
             </geometry>
             <material>
-                <ambient>0.95 0.1 0.1 1</ambient>
-                <diffuse>0.95 0.1 0.1 1</diffuse>
+                <ambient>1 0 0 1</ambient>
+                <diffuse>1 0 0 1</diffuse>
             </material>
         </visual>
-        <visual name="camera_right_axis_visual">
-            <origin xyz="0.09 0 0" rpy="0 1.57079632679 0"/>
+        <visual name="camera_right_y_axis_visual">
+            <origin xyz="0 0.5 0" rpy="1.57079632679 0 0"/>
             <geometry>
-                <cylinder radius="0.0035" length="0.10"/>
+                <cylinder radius="0.008" length="1.0"/>
             </geometry>
             <material>
-                <ambient>0.95 0.1 0.1 1</ambient>
-                <diffuse>0.95 0.1 0.1 1</diffuse>
+                <ambient>0 1 0 1</ambient>
+                <diffuse>0 1 0 1</diffuse>
+            </material>
+        </visual>
+        <visual name="camera_right_z_axis_visual">
+            <origin xyz="0 0 0.5" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.008" length="1.0"/>
+            </geometry>
+            <material>
+                <ambient>0 0 1 1</ambient>
+                <diffuse>0 0 1 1</diffuse>
             </material>
         </visual>
     </link>
