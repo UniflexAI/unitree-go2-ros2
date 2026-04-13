@@ -5,7 +5,7 @@
          - resolution: 848x480
          - horizontal FOV: 90 deg
          - intrinsics: fx = fy = 424, cx = 424, cy = 240
-         - current stereo baseline: 0.05 m -->
+         - stereo baseline: 0.05 m (left/right offsets are +/-0.025 m in Y) -->
     <joint name="camera_mount_joint" type="fixed">
         <origin xyz="0.245 0.0 0.045" rpy="0 0 0"/>
         <parent link="base_link"/>
@@ -18,11 +18,15 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <inertia ixx="1e-4" ixy="0" ixz="0" iyy="1e-4" iyz="0" izz="1e-4"/>
         </inertial>
-        <visual>
+        <visual name="camera_body_visual">
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
                 <box size="0.09 0.025 0.03"/>
             </geometry>
+            <material>
+                <ambient>0.2 0.2 0.2 1</ambient>
+                <diffuse>0.25 0.25 0.25 1</diffuse>
+            </material>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -37,7 +41,18 @@
         <parent link="camera_link"/>
         <child link="camera_depth_frame"/>
     </joint>
-    <link name="camera_depth_frame"/>
+    <link name="camera_depth_frame">
+        <visual name="camera_depth_frustum_visual">
+            <origin xyz="0.06 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find go2_description)/meshes/camera_frustum.dae" scale="0.12 0.12 0.12"/>
+            </geometry>
+            <material>
+                <ambient>0.1 0.6 1.0 0.35</ambient>
+                <diffuse>0.1 0.6 1.0 0.35</diffuse>
+            </material>
+        </visual>
+    </link>
 
     <joint name="camera_depth_optical_joint" type="fixed">
         <origin xyz="0 0 0" rpy="-1.57079632679 0 -1.57079632679"/>
@@ -71,6 +86,16 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
         </inertial>
+        <visual name="camera_left_marker_visual">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.006"/>
+            </geometry>
+            <material>
+                <ambient>0.1 0.9 0.1 1</ambient>
+                <diffuse>0.1 0.9 0.1 1</diffuse>
+            </material>
+        </visual>
     </link>
 
     <joint name="camera_left_ir_optical_joint" type="fixed">
@@ -91,6 +116,16 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
         </inertial>
+        <visual name="camera_right_marker_visual">
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.006"/>
+            </geometry>
+            <material>
+                <ambient>0.9 0.1 0.1 1</ambient>
+                <diffuse>0.9 0.1 0.1 1</diffuse>
+            </material>
+        </visual>
     </link>
 
     <joint name="camera_right_ir_optical_joint" type="fixed">
