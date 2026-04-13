@@ -181,8 +181,20 @@ def generate_launch_description():
     camera_imu_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/camera/camera/imu@sensor_msgs/msg/Imu[ignition.msgs.IMU'],
+        arguments=['/camera/camera/imu_raw@sensor_msgs/msg/Imu[ignition.msgs.IMU'],
         output='screen',
+        remappings=[('/camera/camera/imu_raw', '/camera/camera/imu_raw')],
+    )
+
+    camera_imu_deduplicator = Node(
+        package='champ_gazebo',
+        executable='imu_deduplicator',
+        name='camera_imu_deduplicator',
+        output='screen',
+        parameters=[{
+            'input_topic': '/camera/camera/imu_raw',
+            'output_topic': '/camera/camera/imu',
+        }],
     )
 
     camera_color_info_bridge = Node(
@@ -258,6 +270,7 @@ def generate_launch_description():
             camera_infra1_bridge,
             camera_infra2_bridge,
             camera_imu_bridge,
+            camera_imu_deduplicator,
             camera_color_info_bridge,
             camera_depth_info_bridge,
             camera_infra1_info_bridge,
