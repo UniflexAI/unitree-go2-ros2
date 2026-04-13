@@ -43,11 +43,11 @@ include_directories(
 # target_link_libraries(contact_sensor ${GAZEBO_LIBRARIES})
 # ament_target_dependencies(contact_sensor ${dependencies})
 
-add_executable(imu_deduplicator src/imu_deduplicator.cpp)
-ament_target_dependencies(imu_deduplicator ${dependencies})
+add_executable(realsense_patch_node src/realsense_patch_node.cpp)
+ament_target_dependencies(realsense_patch_node ${dependencies})
 
 install(TARGETS
-  imu_deduplicator
+  realsense_patch_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
