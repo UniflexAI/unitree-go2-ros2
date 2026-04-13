@@ -3,6 +3,7 @@ import os
 import launch_ros
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 from launch import LaunchDescription
 from launch.actions import (DeclareLaunchArgument, ExecuteProcess,
@@ -68,7 +69,6 @@ def generate_launch_description():
     
     links_config = os.path.join(config_pkg_share, "config/links/links.yaml")
     
-    # Set ignition resource path for models
     ign_resource_path = SetEnvironmentVariable(
         name='IGN_GAZEBO_RESOURCE_PATH',
         value=[
@@ -78,8 +78,6 @@ def generate_launch_description():
         ]
     )
 
-    # Start Ignition Gazebo with the world file
-    # Use 'ign gazebo' for Ignition Fortress, or 'gz sim' for newer versions
     start_ignition_cmd = ExecuteProcess(
         cmd=['ign', 'gazebo', '-r', gazebo_world,
              '--render-engine', 'ogre2'],
@@ -93,10 +91,13 @@ def generate_launch_description():
         condition=IfCondition(headless),
     )
 
-    # Robot description
-    robot_description = {"robot_description": Command(["xacro ", LaunchConfiguration("description_path")])}
+    robot_description = {
+        "robot_description": ParameterValue(
+            Command(["xacro ", LaunchConfiguration("description_path")]),
+            value_type=str,
+        )
+    }
 
-    # Robot state publisher (skip if already launched by parent launch file)
     robot_state_publisher = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
@@ -105,7 +106,6 @@ def generate_launch_description():
         condition=IfCondition(PythonExpression(['not ', skip_robot_state_publisher])),
     )
 
-    # Spawn robot in Ignition using ros_gz_sim
     spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
@@ -121,7 +121,6 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Bridge for clock (Ignition -> ROS2)
     clock_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -129,7 +128,6 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Bridge for IMU data
     imu_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -137,7 +135,6 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Bridge for laser scan
     scan_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -145,7 +142,6 @@ def generate_launch_description():
         output='screen',
     )
 
-    # Bridge for Velodyne point cloud (Ignition publishes to /velodyne_points/points)
     velodyne_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -154,7 +150,69 @@ def generate_launch_description():
         remappings=[('/velodyne_points/points', '/velodyne_points')],
     )
 
-    # Load joint state broadcaster (with delay to wait for controller_manager)
+    camera_color_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/camera/color/image_raw@sensor_msgs/msg/Image[ignition.msgs.Image'],
+        output='screen',
+    )
+
+    camera_depth_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/camera/depth/image_rect_raw@sensor_msgs/msg/Image[ignition.msgs.Image'],
+        output='screen',
+    )
+
+    camera_infra1_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/camera/infra1/image_rect_raw@sensor_msgs/msg/Image[ignition.msgs.Image'],
+        output='screen',
+    )
+
+    camera_infra2_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/camera/infra2/image_rect_raw@sensor_msgs/msg/Image[ignition.msgs.Image'],
+        output='screen',
+    )
+
+    camera_imu_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/camera/imu@sensor_msgs/msg/Imu[ignition.msgs.IMU'],
+        output='screen',
+    )
+
+    camera_color_info_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/camera/color/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        output='screen',
+    )
+
+    camera_depth_info_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/camera/depth/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        output='screen',
+    )
+
+    camera_infra1_info_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/camera/infra1/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        output='screen',
+    )
+
+    camera_infra2_info_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/camera/infra2/camera_info@sensor_msgs/msg/CameraInfo[ignition.msgs.CameraInfo'],
+        output='screen',
+    )
+
     load_joint_state_controller = TimerAction(
         period=5.0,
         actions=[ExecuteProcess(
@@ -164,7 +222,6 @@ def generate_launch_description():
         )],
     )
 
-    # Load joint effort controller (with delay to wait for controller_manager)
     load_joint_trajectory_effort_controller = TimerAction(
         period=6.0,
         actions=[ExecuteProcess(
@@ -196,6 +253,15 @@ def generate_launch_description():
             imu_bridge,
             scan_bridge,
             velodyne_bridge,
+            camera_color_bridge,
+            camera_depth_bridge,
+            camera_infra1_bridge,
+            camera_infra2_bridge,
+            camera_imu_bridge,
+            camera_color_info_bridge,
+            camera_depth_info_bridge,
+            camera_infra1_info_bridge,
+            camera_infra2_info_bridge,
             load_joint_state_controller,
             load_joint_trajectory_effort_controller,
         ]
