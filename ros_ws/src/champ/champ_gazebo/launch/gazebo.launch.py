@@ -154,6 +154,42 @@ def generate_launch_description():
         remappings=[('/velodyne_points/points', '/velodyne_points')],
     )
 
+    # Bridges for Realsense-like camera topics
+    camera_color_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/color/image_raw@sensor_msgs/msg/Image[ignition.msgs.Image'],
+        output='screen',
+    )
+
+    camera_depth_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/depth/image_raw@sensor_msgs/msg/Image[ignition.msgs.Image'],
+        output='screen',
+    )
+
+    camera_infra1_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/infra1/image_raw@sensor_msgs/msg/Image[ignition.msgs.Image'],
+        output='screen',
+    )
+
+    camera_infra2_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/infra2/image_raw@sensor_msgs/msg/Image[ignition.msgs.Image'],
+        output='screen',
+    )
+
+    camera_imu_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/camera/imu@sensor_msgs/msg/Imu[ignition.msgs.IMU'],
+        output='screen',
+    )
+
     # Load joint state broadcaster (with delay to wait for controller_manager)
     load_joint_state_controller = TimerAction(
         period=5.0,
@@ -196,6 +232,11 @@ def generate_launch_description():
             imu_bridge,
             scan_bridge,
             velodyne_bridge,
+            camera_color_bridge,
+            camera_depth_bridge,
+            camera_infra1_bridge,
+            camera_infra2_bridge,
+            camera_imu_bridge,
             load_joint_state_controller,
             load_joint_trajectory_effort_controller,
         ]
