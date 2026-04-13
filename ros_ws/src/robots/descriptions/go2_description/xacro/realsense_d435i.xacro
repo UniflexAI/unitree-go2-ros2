@@ -306,7 +306,7 @@
             <pose>0 0 0 -1.57079632679 1.57079632679 -1.57079632679</pose>
             <always_on>true</always_on>
             <update_rate>200</update_rate>
-            <topic>camera/camera/imu</topic>
+            <topic>camera/camera/imu_raw</topic>
             <ignition_frame_id>camera_imu_frame</ignition_frame_id>
             <imu>
                 <angular_velocity>
