@@ -5,7 +5,8 @@
          - resolution: 848x480
          - horizontal FOV: 90 deg
          - intrinsics: fx = fy = 424, cx = 424, cy = 240
-         - stereo baseline: 0.05 m (left/right offsets are +/-0.025 m in Y) -->
+         - stereo baseline: 0.05 m (left/right offsets are +/-0.025 m in Y)
+         - topic naming follows tinynav RealSense expectations where practical -->
     <joint name="camera_mount_joint" type="fixed">
         <origin xyz="0.245 0.0 0.045" rpy="0 0 0"/>
         <parent link="base_link"/>
@@ -153,8 +154,8 @@
             <pose>0 0 0 0 0 0</pose>
             <always_on>true</always_on>
             <update_rate>30</update_rate>
-            <topic>camera/color/image_raw</topic>
-            <camera_info_topic>camera/color/camera_info</camera_info_topic>
+            <topic>camera/camera/color/image_raw</topic>
+            <camera_info_topic>camera/camera/color/camera_info</camera_info_topic>
             <ignition_frame_id>camera_color_optical_frame</ignition_frame_id>
             <camera>
                 <horizontal_fov>1.57079632679</horizontal_fov>
@@ -176,8 +177,8 @@
             <pose>0 0 0 0 0 0</pose>
             <always_on>true</always_on>
             <update_rate>30</update_rate>
-            <topic>camera/depth/image_raw</topic>
-            <camera_info_topic>camera/depth/camera_info</camera_info_topic>
+            <topic>camera/camera/depth/image_rect_raw</topic>
+            <camera_info_topic>camera/camera/depth/camera_info</camera_info_topic>
             <ignition_frame_id>camera_depth_optical_frame</ignition_frame_id>
             <camera>
                 <horizontal_fov>1.57079632679</horizontal_fov>
@@ -199,8 +200,8 @@
             <pose>0 0 0 0 0 0</pose>
             <always_on>true</always_on>
             <update_rate>30</update_rate>
-            <topic>camera/infra1/image_raw</topic>
-            <camera_info_topic>camera/infra1/camera_info</camera_info_topic>
+            <topic>camera/camera/infra1/image_rect_raw</topic>
+            <camera_info_topic>camera/camera/infra1/camera_info</camera_info_topic>
             <ignition_frame_id>camera_left_ir_optical_frame</ignition_frame_id>
             <camera>
                 <horizontal_fov>1.57079632679</horizontal_fov>
@@ -222,8 +223,8 @@
             <pose>0 0 0 0 0 0</pose>
             <always_on>true</always_on>
             <update_rate>30</update_rate>
-            <topic>camera/infra2/image_raw</topic>
-            <camera_info_topic>camera/infra2/camera_info</camera_info_topic>
+            <topic>camera/camera/infra2/image_rect_raw</topic>
+            <camera_info_topic>camera/camera/infra2/camera_info</camera_info_topic>
             <ignition_frame_id>camera_right_ir_optical_frame</ignition_frame_id>
             <camera>
                 <horizontal_fov>1.57079632679</horizontal_fov>
@@ -245,7 +246,7 @@
             <pose>0 0 0 0 0 0</pose>
             <always_on>true</always_on>
             <update_rate>200</update_rate>
-            <topic>camera/imu</topic>
+            <topic>camera/camera/imu</topic>
             <ignition_frame_id>camera_imu_frame</ignition_frame_id>
             <imu>
                 <angular_velocity>
