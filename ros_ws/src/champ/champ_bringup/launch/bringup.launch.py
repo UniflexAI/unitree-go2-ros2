@@ -4,6 +4,7 @@ import launch_ros
 import xml.etree.ElementTree as ET
 from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 from launch import LaunchDescription
 from launch.actions import (
@@ -41,106 +42,109 @@ def generate_launch_description():
         default_value="false",
         description="Use simulation (Gazebo) clock if true",
     )
-
     declare_description_path = DeclareLaunchArgument(
         name="description_path",
         default_value=default_model_path,
         description="Absolute path to robot urdf file",
     )
 
-    declare_rviz_path = DeclareLaunchArgument(
-        name="rviz_path",
-        default_value=default_rviz_path,
-        description="Absolute path to rviz file",
-    )
-
     declare_joints_map_path = DeclareLaunchArgument(
         name="joints_map_path",
-        default_value='',
+        default_value=joints_config,
         description="Absolute path to joints map file",
     )
 
     declare_links_map_path = DeclareLaunchArgument(
         name="links_map_path",
-        default_value='',
+        default_value=links_config,
         description="Absolute path to links map file",
     )
 
     declare_gait_config_path = DeclareLaunchArgument(
         name="gait_config_path",
-        default_value='',
+        default_value=gait_config,
         description="Absolute path to gait config file",
     )
 
     declare_orientation_from_imu = DeclareLaunchArgument(
-        "orientation_from_imu", default_value="false", description="Take orientation from IMU data"
+        name="orientation_from_imu",
+        default_value="false",
+        description="Take orientation from imu data",
     )
 
     declare_rviz = DeclareLaunchArgument(
-        "rviz", default_value="false", description="Launch rviz"
+        name="rviz", default_value="false", description="Run rviz"
     )
 
     declare_rviz_ref_frame = DeclareLaunchArgument(
-        "rviz_ref_frame", default_value="odom", description="Rviz ref frame"
+        name="rviz_ref_frame",
+        default_value="base_link",
+        description="Reference frame for rviz",
     )
 
-    declare_robot_name = DeclareLaunchArgument(
-        "robot_name", default_value="/", description="Robot name"
-    )
-
-    declare_base_link_frame = DeclareLaunchArgument(
-        "base_link_frame", default_value="base_link", description="Base link frame"
-    )
-
-    declare_lite = DeclareLaunchArgument(
-        "lite", default_value="false", description="Lite"
+    declare_joints_hiding = DeclareLaunchArgument(
+        name="joints_hiding",
+        default_value="[\"calf\", \"thigh\", \"hip\"]",
+        description="Joints to hide in rviz",
     )
 
     declare_gazebo = DeclareLaunchArgument(
-        "gazebo", default_value="false", description="If in gazebo"
+        name="gazebo", default_value="false", description="Run robot in gazebo"
+    )
+
+    declare_lite = DeclareLaunchArgument(
+        name="lite", default_value="false", description="Run lightweight setup"
     )
 
     declare_joint_controller_topic = DeclareLaunchArgument(
-        "joint_controller_topic",
-        default_value="joint_group_effort_controller/joint_trajectory",
-        description="Joint controller topic",
+        name="joint_controller_topic",
+        default_value="joint_group_position_controller/command",
+        description="Robot joint controller topic",
     )
 
     declare_hardware_connected = DeclareLaunchArgument(
-        "joint_hardware_connected",
+        name="hardware_connected",
         default_value="false",
-        description="Whether hardware is connected",
-    )
-
-    declare_publish_joint_control = DeclareLaunchArgument(
-        "publish_joint_control",
-        default_value="true",
-        description="Publish joint control",
+        description="Is hardware connected?",
     )
 
     declare_publish_joint_states = DeclareLaunchArgument(
-        "publish_joint_states",
+        name="publish_joint_states",
         default_value="true",
-        description="Publish joint states",
+        description="Publish joint states?",
+    )
+
+    declare_publish_joint_control = DeclareLaunchArgument(
+        name="publish_joint_control",
+        default_value="true",
+        description="Publish joint control?",
     )
 
     declare_publish_foot_contacts = DeclareLaunchArgument(
-        "publish_foot_contacts",
-        default_value="true",
-        description="Publish foot contacts",
-    )
-
-    declare_publish_odom_tf = DeclareLaunchArgument(
-        "publish_odom_tf",
-        default_value="true",
-        description="Publish odom tf from cmd_vel estimation",
+        name="publish_foot_contacts",
+        default_value="false",
+        description="Publish foot contacts?",
     )
 
     declare_close_loop_odom = DeclareLaunchArgument(
-        "close_loop_odom", default_value="false", description=""
+        name="close_loop_odom",
+        default_value="false",
+        description="Use closed loop odom",
     )
 
-    description_ld = IncludeLaunchDescription(
+    declare_odom_scaler = DeclareLaunchArgument(
+        name="odom_scaler",
+        default_value="1.0",
+        description="Odom scaler",
+    )
+
+    declare_base_link_frame = DeclareLaunchArgument(
+        name="base_link_frame",
+        default_value="base_footprint",
+        description="Base link frame for localization",
+    )
+
+    robot_description_ld = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
                 get_package_share_directory("champ_description"),
@@ -165,7 +169,7 @@ def generate_launch_description():
             {"publish_joint_control": LaunchConfiguration("publish_joint_control")},
             {"publish_foot_contacts": LaunchConfiguration("publish_foot_contacts")},
             {"joint_controller_topic": LaunchConfiguration("joint_controller_topic")},
-            {"urdf": Command(['xacro ', LaunchConfiguration('description_path')])},
+            {"urdf": ParameterValue(Command(['xacro ', LaunchConfiguration('description_path')]), value_type=str)},
             LaunchConfiguration('joints_map_path'),
             LaunchConfiguration('links_map_path'),
             LaunchConfiguration('gait_config_path'),
@@ -180,7 +184,7 @@ def generate_launch_description():
         parameters=[
             {"use_sim_time": LaunchConfiguration("use_sim_time")},
             {"orientation_from_imu": LaunchConfiguration("orientation_from_imu")},
-            {"urdf": Command(['xacro ', LaunchConfiguration('description_path')])},
+            {"urdf": ParameterValue(Command(['xacro ', LaunchConfiguration('description_path')]), value_type=str)},
             LaunchConfiguration('joints_map_path'),
             LaunchConfiguration('links_map_path'),
             LaunchConfiguration('gait_config_path'),
@@ -228,38 +232,37 @@ def generate_launch_description():
         namespace='',
         executable='rviz2',
         name='rviz2',
-        arguments=['-d', LaunchConfiguration("rviz_path")],
-        condition=IfCondition(LaunchConfiguration("rviz"))
-    )
-
+        arguments=['-d', default_rviz_path],
+        condition=IfCondition(LaunchConfiguration('rviz')),
+        parameters=[{"use_sim_time": LaunchConfiguration("use_sim_time")}],
+        output='screen')
 
     return LaunchDescription(
         [
             declare_use_sim_time,
             declare_description_path,
-            declare_rviz_path,
             declare_joints_map_path,
             declare_links_map_path,
             declare_gait_config_path,
             declare_orientation_from_imu,
             declare_rviz,
             declare_rviz_ref_frame,
-            declare_robot_name,
-            declare_base_link_frame,
-            declare_lite,
+            declare_joints_hiding,
             declare_gazebo,
+            declare_lite,
             declare_joint_controller_topic,
             declare_hardware_connected,
-            declare_publish_joint_control,
             declare_publish_joint_states,
+            declare_publish_joint_control,
             declare_publish_foot_contacts,
-            declare_publish_odom_tf,
             declare_close_loop_odom,
-            description_ld,
+            declare_odom_scaler,
+            declare_base_link_frame,
+            robot_description_ld,
             quadruped_controller_node,
             state_estimator_node,
             base_to_footprint_ekf,
             footprint_to_odom_ekf,
-            rviz2
+            rviz2,
         ]
     )
