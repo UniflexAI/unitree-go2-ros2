@@ -43,14 +43,54 @@
         <child link="camera_depth_frame"/>
     </joint>
     <link name="camera_depth_frame">
-        <visual name="camera_depth_frustum_visual">
-            <origin xyz="0.06 0 0" rpy="0 0 0"/>
+        <visual name="camera_depth_axis_visual">
+            <origin xyz="0.06 0 0" rpy="0 1.57079632679 0"/>
             <geometry>
-                <mesh filename="file://$(find go2_description)/meshes/camera_frustum.dae" scale="0.12 0.12 0.12"/>
+                <cylinder radius="0.003" length="0.12"/>
             </geometry>
             <material>
-                <ambient>0.1 0.6 1.0 0.35</ambient>
-                <diffuse>0.1 0.6 1.0 0.35</diffuse>
+                <ambient>0.1 0.6 1.0 1</ambient>
+                <diffuse>0.1 0.6 1.0 1</diffuse>
+            </material>
+        </visual>
+        <visual name="camera_depth_fov_top_visual">
+            <origin xyz="0.06 0 0.06" rpy="0 0.78539816339 0"/>
+            <geometry>
+                <cylinder radius="0.0015" length="0.17"/>
+            </geometry>
+            <material>
+                <ambient>0.1 0.6 1.0 0.8</ambient>
+                <diffuse>0.1 0.6 1.0 0.8</diffuse>
+            </material>
+        </visual>
+        <visual name="camera_depth_fov_bottom_visual">
+            <origin xyz="0.06 0 -0.06" rpy="0 -0.78539816339 0"/>
+            <geometry>
+                <cylinder radius="0.0015" length="0.17"/>
+            </geometry>
+            <material>
+                <ambient>0.1 0.6 1.0 0.8</ambient>
+                <diffuse>0.1 0.6 1.0 0.8</diffuse>
+            </material>
+        </visual>
+        <visual name="camera_depth_fov_left_visual">
+            <origin xyz="0.06 0.06 0" rpy="1.57079632679 0.78539816339 0"/>
+            <geometry>
+                <cylinder radius="0.0015" length="0.17"/>
+            </geometry>
+            <material>
+                <ambient>0.1 0.6 1.0 0.8</ambient>
+                <diffuse>0.1 0.6 1.0 0.8</diffuse>
+            </material>
+        </visual>
+        <visual name="camera_depth_fov_right_visual">
+            <origin xyz="0.06 -0.06 0" rpy="1.57079632679 -0.78539816339 0"/>
+            <geometry>
+                <cylinder radius="0.0015" length="0.17"/>
+            </geometry>
+            <material>
+                <ambient>0.1 0.6 1.0 0.8</ambient>
+                <diffuse>0.1 0.6 1.0 0.8</diffuse>
             </material>
         </visual>
     </link>
@@ -97,6 +137,16 @@
                 <diffuse>0.1 0.9 0.1 1</diffuse>
             </material>
         </visual>
+        <visual name="camera_left_axis_visual">
+            <origin xyz="0.04 0 0" rpy="0 1.57079632679 0"/>
+            <geometry>
+                <cylinder radius="0.002" length="0.08"/>
+            </geometry>
+            <material>
+                <ambient>0.1 0.9 0.1 1</ambient>
+                <diffuse>0.1 0.9 0.1 1</diffuse>
+            </material>
+        </visual>
     </link>
 
     <joint name="camera_left_ir_optical_joint" type="fixed">
@@ -121,6 +171,16 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
                 <sphere radius="0.006"/>
+            </geometry>
+            <material>
+                <ambient>0.9 0.1 0.1 1</ambient>
+                <diffuse>0.9 0.1 0.1 1</diffuse>
+            </material>
+        </visual>
+        <visual name="camera_right_axis_visual">
+            <origin xyz="0.04 0 0" rpy="0 1.57079632679 0"/>
+            <geometry>
+                <cylinder radius="0.002" length="0.08"/>
             </geometry>
             <material>
                 <ambient>0.9 0.1 0.1 1</ambient>
