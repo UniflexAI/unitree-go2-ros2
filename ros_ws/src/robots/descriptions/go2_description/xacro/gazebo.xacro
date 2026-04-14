@@ -65,8 +65,6 @@
                 </z>
             </linear_acceleration>
             </imu>
-            <plugin filename="ignition-gazebo-imu-system" name="ignition::gazebo::systems::Imu">
-            </plugin>
         </sensor>
     </gazebo>
 
