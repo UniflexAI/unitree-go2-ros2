@@ -301,13 +301,13 @@
         </sensor>
     </gazebo>
 
-    <gazebo reference="camera_link">
+    <gazebo reference="camera_imu_frame">
         <sensor name="camera_imu_sensor" type="imu">
-            <pose>0 0.025 0 -1.57079632679 1.57079632679 -1.57079632679</pose>
+            <pose>0 0 0 -1.57079632679 1.57079632679 -1.57079632679</pose>
             <always_on>true</always_on>
             <update_rate>200</update_rate>
             <visualize>true</visualize>
-            <topic>camera/camera/imu_raw</topic>
+            <topic>camera/camera/imu</topic>
             <ignition_frame_id>camera_imu_frame</ignition_frame_id>
             <imu>
                 <angular_velocity>
@@ -321,7 +321,6 @@
                     <z><noise type="gaussian"><mean>0.0</mean><stddev>0.0</stddev></noise></z>
                 </linear_acceleration>
             </imu>
-            <plugin filename="ignition-gazebo-imu-system" name="ignition::gazebo::systems::Imu"/>
         </sensor>
     </gazebo>
 </robot>

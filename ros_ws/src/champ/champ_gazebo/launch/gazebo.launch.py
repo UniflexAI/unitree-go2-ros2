@@ -181,9 +181,8 @@ def generate_launch_description():
     camera_imu_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/camera/camera/imu_raw@sensor_msgs/msg/Imu[ignition.msgs.IMU'],
+        arguments=['/camera/camera/imu@sensor_msgs/msg/Imu[ignition.msgs.IMU'],
         output='screen',
-        remappings=[('/camera/camera/imu_raw', '/camera/camera/imu_raw')],
     )
 
     camera_infra1_info_bridge = Node(
@@ -208,8 +207,6 @@ def generate_launch_description():
         name='realsense_patch_node',
         output='screen',
         parameters=[{
-            'imu_input_topic': '/camera/camera/imu_raw',
-            'imu_output_topic': '/camera/camera/imu',
             'infra1_info_input_topic': '/camera/camera/infra1/camera_info_gz',
             'infra1_info_output_topic': '/camera/camera/infra1/camera_info',
             'infra2_info_input_topic': '/camera/camera/infra2/camera_info_gz',
