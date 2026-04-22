@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+set -ex
 
 # Resolve based on this script (not PWD)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -35,6 +36,7 @@ if ! docker ps -a --format '{{.Names}}' | grep -qx "${CONTAINER_NAME}"; then
     --detach -it \
     --shm-size=16g \
     --network host \
+    --ipc host\
     -e DISPLAY="${DISPLAY:-:0}" \
     -e GDK_SCALE="${GDK_SCALE}" \
     -v /tmp/.X11-unix:/tmp/.X11-unix \

@@ -56,19 +56,12 @@ git submodule update --init --recursive
 
 > **Note:** The velodyne lidar package is included as a git submodule. If you've already cloned the repository without the `--recursive` flag, run `git submodule update --init --recursive` to fetch the submodule.
 
-### 1.1 Install dependencies using rosdep:
+### 1.1 Build docker image:
 
 ```bash
-# Install rosdep if not already installed
-sudo apt install -y python3-rosdep
+./dev/build.sh
 
-# Initialize rosdep (only needed once)
-sudo rosdep init  # Skip if already initialized
-rosdep update
-
-# Install all dependencies
-cd <your_ws>
-rosdep install --from-paths src --ignore-src -r -y
+./deb/run.sh
 ```
 
 ### 1.2 Build your workspace:
@@ -84,14 +77,14 @@ You don't need a physical robot to run the following demos. All dependencies wil
 ### 2.1 Basic Simulation
 Run the Ignition Fortress simulation:
 ```bash
-ros2 launch go2_config gazebo.launch.py
+ros2 launch go2_config gazebo_realsense_d435i.launch.py
 ```
 ![Go2 Gazebo Launch](.docs/gz.png)
 
 ### 2.2 Simulation with RViz
 Run the simulation with RViz visualization:
 ```bash
-ros2 launch go2_config gazebo.launch.py rviz:=true
+ros2 launch go2_config gazebo_realsense_d435i.launch.py rviz:=true
 ```
 ![Go2 Gazebo RViz Launch](.docs/gz_rviz.png)
 

@@ -54,10 +54,28 @@ RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/r
 RUN apt-get update && apt-get install -y ros-humble-desktop \
     ros-humble-image-transport-plugins \
     ros-humble-compressed-image-transport \
+    ros-humble-ros-gz-sim \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
 
-USER ${USER_NAME}
+RUN apt-get update && apt-get install -y \
+    ros-humble-joint-state-publisher \
+    ros-humble-ros-gz-sim \
+    ros-humble-velodyne-gazebo-plugins \
+    ros-humble-xacro \
+    ros-humble-gazebo-plugins \
+    ros-humble-ros-gz-bridge \
+    ros-humble-ros-gz-image \
+    ros-humble-gz-ros2-control \
+    ros-humble-ros2-control \
+    ros-humble-ros2-controllers \
+    ros-humble-ecl-threads \
+    ros-humble-robot-localization \
+    ros-humble-joint-state-publisher-gui \
+    ros-humble-nav2-bringup \
+    && rm -rf /var/lib/apt/lists/*
+
+USER root
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 
 # WORKDIR is the same as the project folder name
